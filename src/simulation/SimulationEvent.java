@@ -4,26 +4,16 @@ import ecs.Agent;
 
 public class SimulationEvent{
 	public enum Type{
+		AgentAdded,
+		AgentRemoved,
 		FoodHarvested,
 		FoodRegrown,
-		FoodSpawned,
-		BlobDied,
-		BlobSpawned,
-		BlobUpdated,
 		NextFrame,
 		LogAddBlob
 	}
 	
-	public static class AgentEvent{
-		public Agent agent;
-		
-		protected AgentEvent(Agent agent){
-			this.agent = agent;
-		}
-	}
-	
 	public Type type;
-	public AgentEvent agent;
+	public Agent agent;
 	
 	// creation methods
 	
@@ -36,32 +26,24 @@ public class SimulationEvent{
 	static private SimulationEvent agentEvent(Type type, Agent agent){
 		SimulationEvent event = new SimulationEvent();
 		event.type = type;
-		event.agent = new AgentEvent(agent);
+		event.agent = agent;
 		return event;
 	}
 	
-	static public SimulationEvent foodHarvested(Agent food){
-		return agentEvent(Type.FoodHarvested, food);
+	static public SimulationEvent agentAdded(Agent agent){
+		return agentEvent(Type.AgentAdded, agent);
 	}
 	
-	static public SimulationEvent foodRegrown(Agent food){
-		return agentEvent(Type.FoodRegrown, food);
+	static public SimulationEvent agentRemoved(Agent agent){
+		return agentEvent(Type.AgentRemoved, agent);
 	}
 	
-	static public SimulationEvent foodSpawned(Agent food){
-		return agentEvent(Type.FoodSpawned, food);
+	static public SimulationEvent foodHarvested(){
+		return emptyEvent(Type.FoodHarvested);
 	}
 	
-	static public SimulationEvent blobDied(Agent blob){
-		return agentEvent(Type.BlobDied, blob);
-	}
-	
-	static public SimulationEvent blobUpdated(Agent blob){
-		return agentEvent(Type.BlobUpdated, blob);
-	}
-	
-	static public SimulationEvent blobSpawned(Agent blob){
-		return agentEvent(Type.BlobSpawned, blob);
+	static public SimulationEvent foodRegrown(){
+		return emptyEvent(Type.FoodRegrown);
 	}
 	
 	static public SimulationEvent logAddBlob(Agent blob){

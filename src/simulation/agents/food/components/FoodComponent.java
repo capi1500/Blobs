@@ -1,11 +1,11 @@
 package simulation.agents.food.components;
 
+import ecs.Component;
 import simulation.Simulation;
 import simulation.SimulationEvent;
-import ecs.Component;
 import utils.vector.Vector2i;
 
-public class FoodComponent extends Component{
+public class FoodComponent implements Component{
 	private final int energy;
 	private final int growthTime;
 	private Vector2i position;
@@ -22,7 +22,7 @@ public class FoodComponent extends Component{
 		this.changeTime = changeTime;
 		updateGraphics = true;
 		deltaTime = 0;
-		Simulation.getSimulationEventEmitter().send(SimulationEvent.foodHarvested(getAgent()));
+		Simulation.getSimulationEventEmitter().send(SimulationEvent.foodHarvested());
 	}
 	
 	public void update(){
@@ -30,13 +30,14 @@ public class FoodComponent extends Component{
 			if(deltaTime == growthTime){
 				harvested = false;
 				updateGraphics = true;
-				Simulation.getSimulationEventEmitter().send(SimulationEvent.foodRegrown(getAgent()));
+				Simulation.getSimulationEventEmitter().send(SimulationEvent.foodRegrown());
 			}
 			else{
 				deltaTime++;
 			}
 		}
 	}
+	
 	// constructors
 	
 	public FoodComponent(int energy, int growthTime){
@@ -70,7 +71,7 @@ public class FoodComponent extends Component{
 	
 	@Override
 	public void onCreation(){
-		Simulation.getSimulationEventEmitter().send(SimulationEvent.foodSpawned(getAgent()));
+	
 	}
 	
 	@Override
@@ -86,6 +87,7 @@ public class FoodComponent extends Component{
 					   		 "\n\t\t\tharvested=" + harvested +
 					   		 "\n\t\t}";
 	}
+	
 	// getters and setters
 	
 	public int getEnergy(){

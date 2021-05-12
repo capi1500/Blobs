@@ -6,7 +6,7 @@ import ecs.Agent;
 import ecs.Engine;
 import ecs.EngineSystem;
 import simulation.agents.blob.commands.Command;
-import ecs.components.CircleGraphicComponent;
+import simulation.agents.components.CircleGraphicComponent;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
@@ -28,7 +28,7 @@ public class UpdateBlob extends EngineSystem{
 		
 		double frameTime = (double)(Config.getGraphicSettings().getFrameTime()) / blob.getProgram().size();
 		
-		if(agent.isAlive() && agent.isActive()){
+		if(agent.isAlive() && agent.isActive() && blob.isAlive()){
 			blob.setFrameTime(0);
 			for(Command command : blob.getProgram()){
 				blob.setFrameTime(blob.getFrameTime() + frameTime);
@@ -83,7 +83,7 @@ public class UpdateBlob extends EngineSystem{
 				
 				sequentialTransition.getChildren().add(move);
 				
-				if(!agent.isAlive() || !agent.isActive()){
+				if(!blob.isAlive()){
 					FadeTransition fade = new FadeTransition(Duration.millis(frameTime), circle.getCircle());
 					fade.setFromValue(1);
 					fade.setToValue(0);
@@ -96,6 +96,8 @@ public class UpdateBlob extends EngineSystem{
 			}
 			blob.useEnergy(blob.getEnergyUsage());
 			blob.setAge(blob.getAge() + 1);
+			if(!blob.isAlive())
+				agent.kill();
 		}
 		
 		sequentialTransition.play();

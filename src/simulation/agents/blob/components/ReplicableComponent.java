@@ -6,7 +6,7 @@ import utils.Pair;
 
 import java.util.Arrays;
 
-public class ReplicableComponent extends Component{
+public class ReplicableComponent implements Component{
 	private final float replicationEnergyFraction;
 	private final Pair<Mutation, Float>[] mutations;
 	private final int replicationLimit;
@@ -24,7 +24,6 @@ public class ReplicableComponent extends Component{
 	}
 	
 	private ReplicableComponent(ReplicableComponent copy){
-		super(copy);
 		replicationEnergyFraction = copy.replicationEnergyFraction;
 		replicationChance = copy.replicationChance;
 		mutations = copy.mutations;

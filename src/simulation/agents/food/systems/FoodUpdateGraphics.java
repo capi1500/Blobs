@@ -4,7 +4,7 @@ import simulation.config.Config;
 import ecs.Agent;
 import ecs.Engine;
 import ecs.EngineSystem;
-import ecs.components.CircleGraphicComponent;
+import simulation.agents.components.CircleGraphicComponent;
 import simulation.agents.food.components.FoodComponent;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -36,9 +36,7 @@ public class FoodUpdateGraphics extends EngineSystem{
 			if(food.isHarvested()){
 				Timeline colorChange = new Timeline(new KeyFrame(Duration.millis(food.getChangeTime()), event -> { }));
 				colorChange.setCycleCount(1);
-				colorChange.setOnFinished(tmp -> {
-					graphics.getCircle().setFill(paint);
-				});
+				colorChange.setOnFinished(tmp -> graphics.getCircle().setFill(paint));
 				colorChange.play();
 			}
 			else

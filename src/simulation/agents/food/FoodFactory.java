@@ -3,7 +3,7 @@ package simulation.agents.food;
 import ecs.Agent;
 import ecs.Engine;
 import ecs.Factory;
-import ecs.components.CircleGraphicComponent;
+import simulation.agents.components.CircleGraphicComponent;
 import simulation.agents.food.components.FoodComponent;
 import utils.vector.Vector2i;
 

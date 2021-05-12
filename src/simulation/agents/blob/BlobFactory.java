@@ -2,7 +2,7 @@ package simulation.agents.blob;
 
 import simulation.agents.blob.components.BlobComponent;
 import ecs.Engine;
-import ecs.components.CircleGraphicComponent;
+import simulation.agents.components.CircleGraphicComponent;
 import simulation.agents.blob.components.ReplicableComponent;
 import ecs.Agent;
 import ecs.Factory;

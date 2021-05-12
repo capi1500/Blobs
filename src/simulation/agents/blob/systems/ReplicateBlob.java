@@ -20,7 +20,7 @@ public class ReplicateBlob extends EngineSystem{
 		BlobComponent blob = agent.getComponent(BlobComponent.class);
 		ReplicableComponent replicable = agent.getComponent(ReplicableComponent.class);
 		
-		if(agent.isAlive() && agent.isActive()){
+		if(agent.isAlive() && agent.isActive() && blob.isAlive()){
 			if(replicable.canReplicate() && Random.getRandomNumberGenerator().nextFloat() <= replicable.getReplicationChance()){
 				Agent newAgent = agent.copy();
 				BlobComponent newBlob = newAgent.getComponent(BlobComponent.class);
@@ -40,6 +40,9 @@ public class ReplicateBlob extends EngineSystem{
 				}
 				
 				getEngine().addAgent(newAgent);
+				
+				if(!blob.isAlive())
+					agent.kill();
 			}
 		}
 	}

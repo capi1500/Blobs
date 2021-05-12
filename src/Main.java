@@ -8,7 +8,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage){
 		Config.get().load("");
-		Simulation.simulate(1000, 50, 25);
+		Simulation.simulate(1000, 50, 100);
 		
 		Scene scene = new Scene(Config.getGraphicSettings().getFxGroup(), 700, 700);
 		primaryStage.setScene(scene);

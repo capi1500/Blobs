@@ -1,12 +1,11 @@
-package ecs.components;
+package simulation.agents.components;
 
 import simulation.config.Config;
 import ecs.Component;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import simulation.interfaces.Loggable;
 
-public class CircleGraphicComponent extends Component{
+public class CircleGraphicComponent implements Component{
 	private Circle shape;
 	private Color color;
 	
@@ -19,7 +18,6 @@ public class CircleGraphicComponent extends Component{
 	}
 	
 	private CircleGraphicComponent(CircleGraphicComponent copy){
-		super(copy);
 		shape = new Circle(copy.shape.getCenterX(), copy.shape.getCenterY(), copy.shape.getRadius());
 		color = new Color(copy.color.getRed(), copy.color.getGreen(), copy.color.getBlue(), copy.color.getOpacity());
 		shape.setFill(color);

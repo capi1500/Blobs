@@ -9,7 +9,7 @@ import simulation.map.Field;
 import utils.Direction;
 import utils.vector.Vector2i;
 
-public class BlobComponent extends Component{
+public class BlobComponent implements Component{
 	private Board board;
 	private final Program program;
 	
@@ -49,7 +49,6 @@ public class BlobComponent extends Component{
 	}
 	
 	private BlobComponent(BlobComponent copy){
-		super(copy);
 		board = copy.board;
 		if(copy.program == null)
 			program = new Program();
@@ -75,12 +74,12 @@ public class BlobComponent extends Component{
 	
 	@Override
 	public void onCreation(){
-		Simulation.getSimulationEventEmitter().send(SimulationEvent.blobSpawned(getAgent()));
+	
 	}
 	
 	@Override
 	public void onDestruction(){
-		Simulation.getSimulationEventEmitter().send(SimulationEvent.blobDied(getAgent()));
+	
 	}
 	
 	@Override
@@ -137,8 +136,6 @@ public class BlobComponent extends Component{
 	
 	public void setEnergy(float energy){
 		this.energy = energy;
-		if(this.energy <= 0)
-			getAgent().kill();
 	}
 	
 	public float getEnergyUsage(){
@@ -151,5 +148,9 @@ public class BlobComponent extends Component{
 	
 	public void setFrameTime(double frameTime){
 		this.frameTime = frameTime;
+	}
+	
+	public boolean isAlive(){
+		return energy > 0;
 	}
 }

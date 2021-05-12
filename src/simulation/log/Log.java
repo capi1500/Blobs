@@ -3,6 +3,7 @@ package simulation.log;
 import simulation.SimulationEvent;
 import simulation.agents.blob.components.BlobComponent;
 import listener.Listener;
+import simulation.agents.food.components.FoodComponent;
 
 public class Log implements Listener<SimulationEvent>{
 	private int time;
@@ -48,7 +49,7 @@ public class Log implements Listener<SimulationEvent>{
 	public void log(){
 		System.out.println(time + ", rob: " + blobsAlive + ", żyw: " + foodFields +
 						   ", prg: " + minimumProgramLength + "/" + (float)(summedProgramLength) / blobsAlive + "/" + maximumProgramLength +
-						   ", energ: " + minimumEnergy + "/" + (float)(summedEnergy) / blobsAlive + "/" + maximumEnergy +
+						   ", energ: " + minimumEnergy + "/" + summedEnergy / blobsAlive + "/" + maximumEnergy +
 						   ", wiek: " + minimumAge + "/" + (float)(summedAge) / blobsAlive + "/" + maximumAge);
 	}
 	
@@ -65,24 +66,31 @@ public class Log implements Listener<SimulationEvent>{
 		if(signal.type == SimulationEvent.Type.NextFrame){
 			time++;
 		}
-		else if(signal.type == SimulationEvent.Type.BlobDied){
-			blobsAlive--;
+		else if(signal.type == SimulationEvent.Type.AgentAdded){
+			if(signal.agent.hasComponent(BlobComponent.class)){
+				blobsAlive++;
+			}
+			if(signal.agent.hasComponent(FoodComponent.class)){
+				foodFields++;
+			}
 		}
-		else if(signal.type == SimulationEvent.Type.BlobSpawned){
-			blobsAlive++;
-		}
-		else if(signal.type == SimulationEvent.Type.FoodHarvested){
-			foodFields--;
+		else if(signal.type == SimulationEvent.Type.AgentRemoved){
+			if(signal.agent.hasComponent(BlobComponent.class)){
+				blobsAlive--;
+			}
+			if(signal.agent.hasComponent(FoodComponent.class)){
+				foodFields--;
+			}
 		}
 		else if(signal.type == SimulationEvent.Type.FoodRegrown){
 			foodFields++;
 		}
-		else if(signal.type == SimulationEvent.Type.FoodSpawned){
-			foodFields++;
+		else if(signal.type == SimulationEvent.Type.FoodHarvested){
+			foodFields--;
 		}
 		else if(signal.type == SimulationEvent.Type.LogAddBlob){
-			if(signal.agent.agent.isAlive()){
-				BlobComponent blob = signal.agent.agent.getComponent(BlobComponent.class);
+			if(signal.agent.isAlive()){
+				BlobComponent blob = signal.agent.getComponent(BlobComponent.class);
 				if(toReset){
 					resetInternal();
 					minimumEnergy = summedEnergy = maximumEnergy = blob.getEnergy();
@@ -102,7 +110,7 @@ public class Log implements Listener<SimulationEvent>{
 					summedAge += blob.getAge();
 					maximumAge = Math.max(maximumAge, blob.getAge());
 				}
-				detailedLog += signal.agent.agent.getLog() + "\n";
+				detailedLog += signal.agent.getLog() + "\n";
 			}
 		}
 	}

@@ -10,7 +10,7 @@ import simulation.agents.blob.mutations.Replacement;
 import simulation.agents.blob.mutations.Substraction;
 import simulation.agents.food.FoodFactory;
 import simulation.agents.food.components.FoodComponent;
-import ecs.components.CircleGraphicComponent;
+import simulation.agents.components.CircleGraphicComponent;
 import simulation.interfaces.Loadable;
 import utils.Pair;
 import utils.vector.Vector2i;

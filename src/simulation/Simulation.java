@@ -8,7 +8,7 @@ import ecs.Agent;
 import ecs.Engine;
 import simulation.agents.blob.systems.UpdateBlob;
 import simulation.agents.blob.systems.ReplicateBlob;
-import ecs.components.CircleGraphicComponent;
+import simulation.agents.components.CircleGraphicComponent;
 import simulation.agents.food.components.FoodComponent;
 import simulation.agents.food.systems.FoodUpdate;
 import simulation.agents.food.systems.FoodUpdateGraphics;
@@ -66,12 +66,13 @@ public class Simulation{
 		simulationEventEmitter.processSignals();
 		log.detailedLog();
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(Config.getGraphicSettings().getFrameTime()), event -> {
+			log.reset();
+			
 			engine.update();
-			simulationEventEmitter.processSignals();
 			timer.update();
+			simulationEventEmitter.processSignals();
 			
 			log.log();
-			log.reset();
 			if(timer.getTime() % logTime == 0)
 				log.detailedLog();
 		}));

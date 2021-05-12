@@ -12,7 +12,7 @@ import ecs.components.CircleGraphicComponent;
 import simulation.agents.food.components.FoodComponent;
 import simulation.agents.food.systems.FoodUpdate;
 import simulation.agents.food.systems.FoodUpdateGraphics;
-import simulation.listener.Emitter;
+import listener.Emitter;
 import simulation.map.Board;
 import simulation.map.Field;
 import utils.Random;

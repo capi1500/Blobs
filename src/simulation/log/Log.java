@@ -2,7 +2,7 @@ package simulation.log;
 
 import simulation.SimulationEvent;
 import simulation.agents.blob.components.BlobComponent;
-import simulation.listener.Listener;
+import listener.Listener;
 
 public class Log implements Listener<SimulationEvent>{
 	private int time;

@@ -1,4 +1,4 @@
-package simulation.listener;
+package listener;
 
 import simulation.interfaces.Destroyable;
 

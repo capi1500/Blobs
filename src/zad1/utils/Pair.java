@@ -1,0 +1,23 @@
+package zad1.utils;
+
+public class Pair<T1, T2>{
+	public T1 first;
+	public T2 second;
+	
+	// constructros
+	
+	public Pair(){
+	}
+	
+	public Pair(T1 first, T2 second){
+		this.first = first;
+		this.second = second;
+	}
+	
+	// overrides
+	
+	@Override
+	public String toString(){
+		return "{" + first + ", " + second + '}';
+	}
+}

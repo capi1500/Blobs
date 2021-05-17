@@ -6,7 +6,7 @@ ile_daje_jedzenie 24
 ile_rośnie_jedzenie 3
 koszt_tury 3
 pr_powielania 0.5
-ułamek_energii_rodzica 1
+ułamek_energii_rodzica 0.7
 limit_powielania 100
 pr_usunięcia_instrukcji 0.3
 pr_dodania_instrukcji 0.3

@@ -1,6 +1,6 @@
 package utils;
 
-import simulation.interfaces.Copyable;
+import interfaces.Copyable;
 
 public abstract class Vector2<T> implements Copyable{
 	public T x;

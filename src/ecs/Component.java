@@ -1,11 +1,23 @@
 package ecs;
 
-import simulation.interfaces.Copyable;
-import simulation.interfaces.Creatable;
-import simulation.interfaces.Destroyable;
-import simulation.interfaces.Loggable;
+import interfaces.Copyable;
+import interfaces.Creatable;
+import interfaces.Destroyable;
+import interfaces.Loggable;
+import listener.Listener;
 
-public interface Component extends Copyable, Creatable, Destroyable, Loggable{
+public abstract class Component implements Copyable, Creatable, Destroyable, Loggable, Listener<Action>{
 	@Override
-	Component copy();
+	public abstract Component copy();
+	
+	@Override
+	public void onCreation(){}
+	
+	@Override
+	public void onDestruction(){}
+	
+	@Override
+	public String getLog(){
+		return "\t\t" + toString() + "\n";
+	}
 }

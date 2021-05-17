@@ -1,8 +1,9 @@
 package ecs;
 
-import simulation.interfaces.Destroyable;
+import interfaces.Destroyable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -20,6 +21,9 @@ public class Engine implements Destroyable{
 	
 	public void update(){
 		updating = true;
+		
+		Collections.shuffle(agents);
+		
 		for(EngineSystem s : engineSystems){
 			if(s.isActive()){
 				for(Agent a : agents){
@@ -27,6 +31,9 @@ public class Engine implements Destroyable{
 						s.execute(a);
 				}
 			}
+		}
+		for(Agent agent : agents){
+			agent.update();
 		}
 		updating = false;
 		

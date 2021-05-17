@@ -1,25 +1,39 @@
 package ecs;
 
+import ecs.actions.Activate;
+import ecs.actions.Deactivate;
+import ecs.actions.Kill;
+import ecs.actions.Resurect;
+import listener.Emitter;
 import simulation.Simulation;
 import simulation.SimulationEvent;
-import simulation.interfaces.Copyable;
-import simulation.interfaces.Creatable;
-import simulation.interfaces.Destroyable;
-import simulation.interfaces.Loggable;
+import interfaces.Copyable;
+import interfaces.Creatable;
+import interfaces.Destroyable;
+import interfaces.Loggable;
 import utils.Bitset;
 
 public class Agent implements Copyable, Creatable, Destroyable, Loggable{
 	private final ComponentStorage componentStorage;
 	private final Engine engine;
+	private final Emitter<Action> actionEmitter;
 	
-	private boolean active;
-	private boolean alive;
+	private boolean active; // should be updated
+	private boolean alive; // most agents can be dead
+	
+	// methods
+	
+	void update(){
+		actionEmitter.processSignals();
+	}
 	
 	// constructors
 	
 	public Agent(Engine engine){
 		this.engine = engine;
 		componentStorage = new ComponentStorage(engine);
+		actionEmitter = new Emitter<>();
+		
 		active = true;
 		alive = true;
 	}
@@ -27,6 +41,13 @@ public class Agent implements Copyable, Creatable, Destroyable, Loggable{
 	private Agent(Agent copy){
 		this.engine = copy.engine;
 		componentStorage = copy.componentStorage.copy();
+		actionEmitter = new Emitter<>();
+		
+		for(Component component : componentStorage.getComponents()){
+			if(component != null)
+				actionEmitter.addListener(component);
+		}
+		
 		active = copy.active;
 		alive = copy.alive;
 	}
@@ -41,6 +62,7 @@ public class Agent implements Copyable, Creatable, Destroyable, Loggable{
 	
 	@Override
 	public void onDestruction(){
+		actionEmitter.removeAll();
 		componentStorage.onDestruction();
 		Simulation.getSimulationEventEmitter().send(SimulationEvent.agentRemoved(this));
 	}
@@ -72,9 +94,11 @@ public class Agent implements Copyable, Creatable, Destroyable, Loggable{
 	public <T extends Component> void addComponent(Class<T> component, T componentObject){
 		componentStorage.getComponents()[engine.componentId(component)] = componentObject;
 		componentStorage.getSignature().set(engine.componentBit(component), true);
+		actionEmitter.addListener(componentObject);
 	}
 	
 	public <T extends Component> void removeComponent(Class<T> component){
+		actionEmitter.removeListener(componentStorage.getComponents()[engine.componentId(component)]);
 		componentStorage.getComponents()[engine.componentId(component)] = null;
 		componentStorage.getSignature().set(engine.componentBit(component), false);
 	}
@@ -95,18 +119,22 @@ public class Agent implements Copyable, Creatable, Destroyable, Loggable{
 	
 	public void activate(){
 		active = true;
+		actionEmitter.sendNow(new Activate());
 	}
 	
 	public void deactivate(){
 		active = false;
+		actionEmitter.sendNow(new Deactivate());
 	}
 	
 	public void resurect(){
 		alive = true;
+		actionEmitter.sendNow(new Resurect());
 	}
 	
 	public void kill(){
 		alive = false;
+		actionEmitter.sendNow(new Kill());
 	}
 	
 	public boolean isActive(){
@@ -115,5 +143,9 @@ public class Agent implements Copyable, Creatable, Destroyable, Loggable{
 	
 	public boolean isAlive(){
 		return alive;
+	}
+	
+	public Emitter<Action> getActionEmitter(){
+		return actionEmitter;
 	}
 }

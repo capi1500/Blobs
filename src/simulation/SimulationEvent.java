@@ -9,7 +9,7 @@ public class SimulationEvent{
 		FoodHarvested,
 		FoodRegrown,
 		NextFrame,
-		LogAddBlob
+		LogAgent
 	}
 	
 	public Type type;
@@ -46,8 +46,8 @@ public class SimulationEvent{
 		return emptyEvent(Type.FoodRegrown);
 	}
 	
-	static public SimulationEvent logAddBlob(Agent blob){
-		return agentEvent(Type.LogAddBlob, blob);
+	static public SimulationEvent logAgent(Agent agent){
+		return agentEvent(Type.LogAgent, agent);
 	}
 	
 	static public SimulationEvent nextFrame(){

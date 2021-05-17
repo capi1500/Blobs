@@ -1,12 +1,10 @@
 package ecs;
 
-import simulation.interfaces.Copyable;
-import simulation.interfaces.Creatable;
-import simulation.interfaces.Destroyable;
-import simulation.interfaces.Loggable;
+import interfaces.Copyable;
+import interfaces.Creatable;
+import interfaces.Destroyable;
+import interfaces.Loggable;
 import utils.Bitset;
-
-import java.util.Arrays;
 
 public class ComponentStorage implements Copyable, Creatable, Destroyable, Loggable{
 	private final Component[] components;
@@ -64,6 +62,7 @@ public class ComponentStorage implements Copyable, Creatable, Destroyable, Logga
 		}
 		return out + "\t]";
 	}
+	
 	// getters and setters
 	
 	public Component[] getComponents(){

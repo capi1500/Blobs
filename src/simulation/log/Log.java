@@ -1,9 +1,10 @@
 package simulation.log;
 
+import ecs.Agent;
 import simulation.SimulationEvent;
-import simulation.agents.blob.components.BlobComponent;
+import simulation.agents.components.BlobComponent;
 import listener.Listener;
-import simulation.agents.food.components.FoodComponent;
+import simulation.agents.components.FoodComponent;
 
 public class Log implements Listener<SimulationEvent>{
 	private int time;
@@ -22,22 +23,48 @@ public class Log implements Listener<SimulationEvent>{
 	private int maximumAge;
 	private int summedAge;
 	
-	private boolean toReset;
-	
 	private String detailedLog;
 	
 	// methods
 	
 	public void reset(){
-		toReset = true;
+		blobsAlive = 0;
+		foodFields = 0;
+		minimumEnergy = minimumAge = minimumProgramLength = 0;
+		maximumEnergy = maximumAge = maximumProgramLength = 0;
+		summedEnergy = summedAge = summedProgramLength = 0;
+		detailedLog = "";
 	}
 	
-	private void resetInternal(){
-		toReset = false;
-		minimumEnergy = minimumAge = minimumProgramLength = 0;
-	    maximumEnergy = maximumAge = maximumProgramLength = 0;
-	    summedEnergy = summedAge = summedProgramLength = 0;
-	    detailedLog = "";
+	private void addBlob(Agent agent){
+		BlobComponent blob = agent.getComponent(BlobComponent.class);
+		
+		if(blobsAlive == 0){
+			minimumEnergy = maximumEnergy = blob.getEnergy();
+			minimumProgramLength = maximumProgramLength = blob.getProgram().size();
+			minimumAge = maximumAge = blob.getAge();
+		}
+		
+		minimumEnergy = Math.min(minimumEnergy, blob.getEnergy());
+		summedEnergy += blob.getEnergy();
+		maximumEnergy = Math.max(maximumEnergy, blob.getEnergy());
+		
+		minimumProgramLength = Math.min(minimumProgramLength, blob.getProgram().size());
+		summedProgramLength += blob.getProgram().size();
+		maximumProgramLength = Math.max(maximumProgramLength, blob.getProgram().size());
+		
+		minimumAge = Math.min(minimumAge, blob.getAge());
+		summedAge += blob.getAge();
+		maximumAge = Math.max(maximumAge, blob.getAge());
+		blobsAlive++;
+		
+		detailedLog += agent.getLog() + "\n";
+	}
+	
+	private void addFood(Agent agent){
+		FoodComponent food = agent.getComponent(FoodComponent.class);
+		if(!food.isHarvested())
+			foodFields++;
 	}
 	
 	public void detailedLog(){
@@ -63,55 +90,15 @@ public class Log implements Listener<SimulationEvent>{
 	
 	@Override
 	public void onSignal(SimulationEvent signal){
-		if(signal.type == SimulationEvent.Type.NextFrame){
-			time++;
-		}
-		else if(signal.type == SimulationEvent.Type.AgentAdded){
-			if(signal.agent.hasComponent(BlobComponent.class)){
-				blobsAlive++;
-			}
-			if(signal.agent.hasComponent(FoodComponent.class)){
-				foodFields++;
-			}
-		}
-		else if(signal.type == SimulationEvent.Type.AgentRemoved){
-			if(signal.agent.hasComponent(BlobComponent.class)){
-				blobsAlive--;
-			}
-			if(signal.agent.hasComponent(FoodComponent.class)){
-				foodFields--;
-			}
-		}
-		else if(signal.type == SimulationEvent.Type.FoodRegrown){
-			foodFields++;
-		}
-		else if(signal.type == SimulationEvent.Type.FoodHarvested){
-			foodFields--;
-		}
-		else if(signal.type == SimulationEvent.Type.LogAddBlob){
+		if(signal.type == SimulationEvent.Type.LogAgent){
 			if(signal.agent.isAlive()){
-				BlobComponent blob = signal.agent.getComponent(BlobComponent.class);
-				if(toReset){
-					resetInternal();
-					minimumEnergy = summedEnergy = maximumEnergy = blob.getEnergy();
-					minimumProgramLength = summedProgramLength = maximumProgramLength = blob.getProgram().size();
-					minimumAge = summedAge = maximumAge = blob.getAge();
-				}
-				else{
-					minimumEnergy = Math.min(minimumEnergy, blob.getEnergy());
-					summedEnergy += blob.getEnergy();
-					maximumEnergy = Math.max(maximumEnergy, blob.getEnergy());
-					
-					minimumProgramLength = Math.min(minimumProgramLength, blob.getProgram().size());
-					summedProgramLength += blob.getProgram().size();
-					maximumProgramLength = Math.max(maximumProgramLength, blob.getProgram().size());
-					
-					minimumAge = Math.min(minimumAge, blob.getAge());
-					summedAge += blob.getAge();
-					maximumAge = Math.max(maximumAge, blob.getAge());
-				}
-				detailedLog += signal.agent.getLog() + "\n";
+				if(signal.agent.hasComponent(BlobComponent.class))
+					addBlob(signal.agent);
+				else if(signal.agent.hasComponent(FoodComponent.class))
+					addFood(signal.agent);
 			}
 		}
+		else if(signal.type == SimulationEvent.Type.NextFrame)
+			time++;
 	}
 }

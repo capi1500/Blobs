@@ -1,20 +1,16 @@
 package simulation;
 
+import loader.Loader;
+import simulation.agents.components.*;
+import simulation.agents.systems.*;
 import simulation.config.Config;
 import simulation.log.Log;
 import simulation.log.LogUpdateSystem;
-import simulation.agents.blob.components.*;
 import ecs.Agent;
 import ecs.Engine;
-import simulation.agents.blob.systems.UpdateBlob;
-import simulation.agents.blob.systems.ReplicateBlob;
-import simulation.agents.components.CircleGraphicComponent;
-import simulation.agents.food.components.FoodComponent;
-import simulation.agents.food.systems.FoodUpdate;
-import simulation.agents.food.systems.FoodUpdateGraphics;
 import listener.Emitter;
 import simulation.map.Board;
-import simulation.map.Field;
+import utils.Path;
 import utils.Random;
 import utils.vector.Vector2i;
 import javafx.animation.KeyFrame;
@@ -26,62 +22,68 @@ public class Simulation{
 	
 	// methods
 	
-	static public void simulate(int time, int blobCount, int logTime){
-		Engine engine = new Engine(
-				BlobComponent.class,
-				CircleGraphicComponent.class,
-				ReplicableComponent.class,
-				FoodComponent.class
-		);
-		
-		engine.addSystem(new FoodUpdate(engine));
-		engine.addSystem(new UpdateBlob(engine));
-		engine.addSystem(new ReplicateBlob(engine));
-		engine.addSystem(new FoodUpdateGraphics(engine));
-		engine.addSystem(new LogUpdateSystem(engine));
-		
-		Board board = new Board(Config.getSimulationSettings().getSize());
+	static public void simulate(){
 		Timer timer = new Timer();
 		Log log = new Log();
 		simulationEventEmitter.addListener(log);
+		simulationEventEmitter.addListener(Config.getGraphicSettings());
 		
-		for(int x = 0; x < board.getSize().x; x++){
-			for(int y = 0; y < board.getSize().y; y++){
-				if(Random.getRandomNumberGenerator().nextFloat() <= Config.getSimulationSettings().getFoodChance()){
-					Agent food = Config.getSimulationSettings().getRandomFood().spawn(engine, new Vector2i(x, y));
-					board.setField(new Vector2i(x, y), new Field(food));
-					engine.addAgent(food);
-				}
-			}
-		}
+		Engine engine = new Engine(
+				BlobComponent.class,
+				DirectionComponent.class,
+				FoodComponent.class,
+				GraphicComponent.class,
+				PositionComponent.class,
+				ReplicableComponent.class,
+				ColorComponent.class
+		);
 		
-		for(int i = 0; i < blobCount; i++){
+		engine.addSystem(new UpdateFood(engine));
+		engine.addSystem(new UpdateBlob(engine));
+		engine.addSystem(new ReplicateBlob(engine));
+		engine.addSystem(new UpdateGraphics(engine));
+		engine.addSystem(new LogUpdateSystem(engine));
+		
+		Board board = new Board(engine);
+		Loader.addListener(board);
+		Loader.loadBoard(new Path(Config.getSimulationSettings().getBoard()));
+		
+		for(int i = 0; i < Config.getSimulationSettings().getStartingBlobCount(); i++){
 			int x = Random.getRandomNumberGenerator().nextInt(board.getSize().x);
 			int y = Random.getRandomNumberGenerator().nextInt(board.getSize().y);
 			Agent blob = Config.getSimulationSettings().getRandomBreed().spawn(engine, board, new Vector2i(x, y));
 			engine.addAgent(blob);
-			simulationEventEmitter.send(SimulationEvent.logAddBlob(blob));
+			simulationEventEmitter.send(SimulationEvent.logAgent(blob));
 		}
 		
 		simulationEventEmitter.processSignals();
-		log.detailedLog();
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(Config.getGraphicSettings().getFrameTime()), event -> {
-			log.reset();
-			
-			engine.update();
-			timer.update();
-			simulationEventEmitter.processSignals();
-			
-			log.log();
-			if(timer.getTime() % logTime == 0)
-				log.detailedLog();
-		}));
-		timeline.setCycleCount(time);
+		
+		Timeline timeline = new Timeline(
+				new KeyFrame(Duration.ZERO, event -> {
+					log.reset();
+					
+					engine.update();
+					
+					Config.getGraphicSettings().resetTickTime();
+					
+					timer.update();
+					simulationEventEmitter.processSignals();
+					
+					log.log();
+					if(timer.getTime() % Config.getSimulationSettings().getLogTime() == 0)
+						log.detailedLog();
+				}),
+				new KeyFrame(Duration.millis(Config.getGraphicSettings().getFrameTime()))
+		);
+		
+		timeline.setCycleCount(Config.getSimulationSettings().getSimulationTime());
 		timeline.setOnFinished(tmp -> {
 			log.detailedLog();
 			engine.onDestruction();
 			simulationEventEmitter.onDestruction();
 		});
+		
+		log.detailedLog();
 		timeline.play();
 	}
 	

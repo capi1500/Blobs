@@ -1,6 +1,6 @@
 package simulation.agents.blob.mutations;
 
-import simulation.agents.blob.components.BlobComponent;
+import simulation.agents.components.BlobComponent;
 import simulation.agents.blob.Mutation;
 
 public class Substraction implements Mutation{

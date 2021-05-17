@@ -1,6 +1,6 @@
 package listener;
 
-import simulation.interfaces.Destroyable;
+import interfaces.Destroyable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,6 +14,11 @@ public class Emitter<T> implements Destroyable{
 	
 	public void send(T signal){
 		signals.add(signal);
+	}
+	
+	public void sendNow(T signal){
+		for(Listener<T> listener : listeners)
+			listener.onSignal(signal);
 	}
 	
 	public void processSignals(){

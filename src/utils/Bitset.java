@@ -1,6 +1,6 @@
 package utils;
 
-import simulation.interfaces.Copyable;
+import interfaces.Copyable;
 
 import java.util.Arrays;
 

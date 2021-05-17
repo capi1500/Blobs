@@ -1,0 +1,14 @@
+ile_tur 1000
+pocz_ile_robów 50
+pocz_progr liwipij
+pocz_energia 50
+ile_daje_jedzenie 24
+ile_rośnie_jedzenie 3
+koszt_tury 3
+pr_powielania 0.5
+ułamek_energii_rodzica 1
+limit_powielania 100
+pr_usunięcia_instrukcji 0.3
+pr_dodania_instrukcji 0.3
+pr_zmiany_instrukcji 0.3
+co_ile_wypisz 100

@@ -1,13 +1,14 @@
 package simulation.agents.blob;
 
-import simulation.agents.blob.commands.Command;
-import simulation.interfaces.Loggable;
+import ecs.Action;
+import interfaces.Loggable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class Program extends ArrayList<Command> implements Loggable{
+public class Program extends ArrayList<Class<? extends Action>> implements Loggable{
 	// constructors
-	
+
 	public Program(int initialCapacity){
 		super(initialCapacity);
 	}
@@ -16,26 +17,23 @@ public class Program extends ArrayList<Command> implements Loggable{
 	}
 	
 	public Program(Program copy){
-		for(Command command : copy){
-			add(command);
-		}
+		this.addAll(copy);
 	}
 	
-	public Program(Command... commands){
-		for(Command c : commands){
-			add(c);
-		}
+	public Program(Class<? extends Action>... actions){
+		this.addAll(Arrays.asList(actions));
 	}
 	
 	// override
 	
 	@Override
 	public String getLog(){
-		String content = "";
+		StringBuilder content = new StringBuilder();
 		for(int i = 0; i < size(); i++){
-			content += get(i).toString();
+			String fullName = get(i).getTypeName();
+			content.append(fullName.substring(fullName.lastIndexOf('.') + 1));
 			if(i + 1 != size())
-				content += ", ";
+				content.append(", ");
 		}
 		return "[" + content + "]";
 	}

@@ -1,7 +1,7 @@
 package simulation.map;
 
 import ecs.Agent;
-import simulation.agents.food.components.FoodComponent;
+import simulation.agents.components.FoodComponent;
 
 public class Field{
 	private Agent food;
@@ -25,8 +25,7 @@ public class Field{
 		return food != null && food.hasComponent(FoodComponent.class);
 	}
 	
-	public FoodComponent getFood(){
-		return food.getComponent(FoodComponent.class);
+	public Agent getFood(){
+		return food;
 	}
-	
 }
